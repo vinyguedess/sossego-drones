@@ -1,6 +1,7 @@
 # App files and folders
 /coverage
 /node_modules
+/package-lock.json
 /src
 /test
 /.env

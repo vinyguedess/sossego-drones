@@ -1,0 +1,4 @@
+# App files and folders
+/build
+/coverage
+/node_modules

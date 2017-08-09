@@ -39,6 +39,34 @@ export const makePostPromise = (url:string, params:any):Promise<IMadeAPromise> =
 }
 
 
+export const makePutPromise = (url:string, params:any):Promise<IMadeAPromise> =>
+{
+    return new Promise((resolve:Function, reject:Function):void => 
+    {
+        let willBeResolved:IMadeAPromise = {};
+        baseRequest.put(url, { 'body': JSON.stringify(params) })
+            .on('error', (err:Error):void => reject(err))
+            .on('response', (response:any):void => willBeResolved.statusCode = response.statusCode)
+            .on('data', (bufferedData:Buffer):void => willBeResolved.body = JSON.parse(bufferedData.toString()))
+            .on('end', () => resolve(willBeResolved));
+    });
+}
+
+
+export const makeDeletePromise = (url:string):Promise<IMadeAPromise> =>
+{
+    return new Promise((resolve:Function, reject:Function):void => 
+    {
+        let willBeResolved:IMadeAPromise = {};
+        baseRequest.delete(url)
+            .on('error', (err:Error):void => reject(err))
+            .on('response', (response:any):void => willBeResolved.statusCode = response.statusCode)
+            .on('data', (bufferedData:Buffer):void => willBeResolved.body = JSON.parse(bufferedData.toString()))
+            .on('end', () => resolve(willBeResolved));
+    });
+}
+
+
 export interface IMadeAPromise
 {
 

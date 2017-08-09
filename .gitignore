@@ -1,5 +1,5 @@
 # App files and folders
-/**.*.js
+/api/**.*.js
 
 # OS and IDE files and folders
 /.idea
