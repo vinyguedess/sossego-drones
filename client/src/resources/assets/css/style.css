@@ -1,0 +1,37 @@
+/* Structure */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+.App { }
+
+/* Header */
+.App-header {
+    background-color: #222;
+    color: #F4F4F4;
+    margin-top: -20px;
+}
+.App-header .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+    height: 80px;
+}
+
+@keyframes App-logo-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Content */
+.App-content {
+    min-height: 83vh;
+    font-size: large;
+}
+
+/* Footer */
+.App-footer {
+    background-color: #222;
+    color: #F4F4F4;
+    text-indent: 30px;
+    padding: 10px 0px;
+}
