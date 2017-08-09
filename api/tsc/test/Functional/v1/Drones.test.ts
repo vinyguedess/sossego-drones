@@ -13,7 +13,8 @@ describe('DronesTest', function():void {
                 'drone': { 'cor': 'purple', 'tamanho': 'grande', 'preco': 4223.99 } 
             })
                 .then((response:IMadeAPromise):void => {
-                    console.log(response);
+                    expect(response.statusCode).to.be.equal(200);
+                    expect(response.body.status).to.be.true;
                 })
                 .then(() => done());
         });
