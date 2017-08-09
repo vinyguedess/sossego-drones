@@ -1,0 +1,6 @@
+# App files and folders
+/coverage
+/node_modules
+/src
+/test
+/.env

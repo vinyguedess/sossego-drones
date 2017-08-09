@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es2016",
+        "rootDir": "tsc",
+        "outDir": "",
+        "typeRoots": ["./node_modules/@types"]
+    }
+}

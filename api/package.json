@@ -1,0 +1,33 @@
+{
+  "name": "sossego-drones-api",
+  "description": "API responsible for managing drones' data",
+  "keywords": [
+    "drones",
+    "managing",
+    "crud",
+    "api"
+  ],
+  "version": "1.0.0",
+  "author": {
+    "name": "Vinicius Guedes",
+    "email": "viniciusgued@gmail.com",
+    "url": "https://vinyguedess.github.io"
+  },
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "dotenv": "^4.0.0",
+    "express": "^4.15.4",
+    "mysql": "^2.14.1"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^8.0.20",
+    "chai": "^4.1.1",
+    "mocha": "^3.5.0",
+    "request": "^2.81.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "istanbul cover ./node_modules/mocha/bin/_mocha test/**/*.test.js"
+  }
+}
