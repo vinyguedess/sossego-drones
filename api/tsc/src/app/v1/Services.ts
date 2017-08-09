@@ -4,6 +4,9 @@ import { Connection } from './../../bootstrap'
 export class DroneService
 {
 
+    private lastInsertedId:number = null;
+    private errors:Array<string> = [];
+
     public insert(drone:any):Promise<boolean>
     {
         return Connection.query(
@@ -20,9 +23,28 @@ export class DroneService
         );
     }
 
-    private checkQueryResponse(resposta:any):boolean
+    public getErrors():Array<string>
     {
-        return resposta.insertId > 0;
+        return this.errors;
+    }
+
+    public addError(message:string):void
+    {
+        this.errors.push(message);
+    }
+
+    public getLastInsertedId()
+    {
+        return this.lastInsertedId;
+    }
+
+    private checkQueryResponse(response:any):boolean
+    {
+        if (!(response.insertId > 0))
+            return false;
+
+        this.lastInsertedId = response.insertId;
+        return true;
     }
 
 }

@@ -3,6 +3,7 @@ import * as request from 'request';
 
 let baseRequest = request.defaults({
     baseUrl: 'http://localhost:3001',
+    timeout: 10000,
     headers: {
         'Content-type': 'application/json; charset=utf-8'
     }
@@ -29,7 +30,7 @@ export const makePostPromise = (url:string, params:any):Promise<IMadeAPromise> =
     {
         let willBeResolved:IMadeAPromise = {};
 
-        baseRequest.post(url, { 'data': params })
+        baseRequest.post(url, { 'body': JSON.stringify(params) })
             .on('error', (err:Error):void => reject(err))
             .on('response', (response:any):void => willBeResolved.statusCode = response.statusCode)
             .on('data', (bufferedData:Buffer):void => willBeResolved.body = JSON.parse(bufferedData.toString()))

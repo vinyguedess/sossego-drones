@@ -19,17 +19,22 @@ export class DronesController
 
     public insertAction(request:Request, response:Response):void
     {
-        return response.status(200).json({
-            data: request.body
-        });
+        let droneService:DroneService = new DroneService();
+        
+        droneService
+            .insert(request.body.drone)
+            .then((resposta:boolean):void => {
+                if (!resposta)
+                    return response.status(400).json({
+                        status: false,
+                        message: droneService.getErrors()
+                    });
 
-        //new DroneService()
-        //    .insert(request.body.drone)
-        //    .then((resposta:boolean):void => {
-        //        response.status(200).json({
-        //            data: response
-        //        });
-        //    });
+                response.status(200).json({
+                    status: true,
+                    data: droneService.getLastInsertedId()
+                });
+            });
     }
 
 }

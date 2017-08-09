@@ -2,13 +2,16 @@ import { expect } from 'chai';
 import { bootstrap } from './../../../src/bootstrap';
 import { IMadeAPromise, makeGetPromise, makePostPromise } from './../../bootstrap';
 
-describe('DronesTest', ():void => {
+describe('DronesTest', function():void {
 
-    before(():void => this.server = bootstrap.listen(3001));
+    this.timeout(10000);
+    before(function():void { this.server = bootstrap.listen(3001) });
 
     describe('Inserting drones', ():void => {
         it('Should insert a drone without problems', (done:Function):void => {
-            makePostPromise('/api/v1/drones', { 'drone': { 'cor': 'purple', 'tamanho': 'grande', 'preco': 4223.99 } })
+            makePostPromise('/api/v1/drones', { 
+                'drone': { 'cor': 'purple', 'tamanho': 'grande', 'preco': 4223.99 } 
+            })
                 .then((response:IMadeAPromise):void => {
                     console.log(response);
                 })
@@ -27,6 +30,6 @@ describe('DronesTest', ():void => {
         });
     });
 
-    after(():void => this.server.close());
+    after(function():void { this.server.close() });
 
 });
