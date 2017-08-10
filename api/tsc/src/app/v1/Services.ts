@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import { Connection } from './../../bootstrap'
 
 
@@ -64,6 +65,18 @@ export class DroneService
     {
         return Connection.query(`DELETE FROM drones WHERE id = ?`, [ id ])
             .then((response:any):boolean => this.checkQueryResponse(response));
+    }
+
+    public upload(id:number, foto:string):Promise<boolean>
+    {
+        return new Promise((resolve:Function, reject:Function):void => 
+        {
+            fs.writeFile(
+                `${process.cwd()}/../storage/${new Buffer(id + '').toString('base64')}.png`,
+                new Buffer(foto, 'base64').toString('ascii'),
+                (err:Error) => err ? reject(err) : resolve(true)
+            );
+        });
     }
 
     public getErrors():Array<string>

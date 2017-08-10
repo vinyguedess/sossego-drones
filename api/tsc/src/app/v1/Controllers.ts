@@ -48,6 +48,9 @@ export class DronesController
                         message: droneService.getErrors()
                     });
 
+                if (typeof request.body.drone.foto !== 'undefined')
+                    droneService.upload(droneService.getLastInsertedId(), request.body.drone.foto);
+
                 response.status(200).json({
                     status: true,
                     data: droneService.getLastInsertedId()
