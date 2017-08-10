@@ -5,16 +5,26 @@ import { DroneService } from './Services';
 export class DronesController
 {
 
-    public indexAction(request:Request, response:Response):void
+    public indexAction(request:Request, response:Response, next:Function):void
     {
         new DroneService()
-            .findAll()
-            .then((results:Array<any>):void => {
+            .findAll(
+                request.query.limit || 50,
+                request.query.offset || 0
+            )
+            .then((results:any):void => {
                 response.status(200).json({
                     status: true,
                     data: results
                 });
-            });
+            })
+            .catch((err:Error):void => {                
+                response.status(500).json({
+                    status: false,
+                    message: [err.message]
+                });
+            })
+            .then(() => next());
     }
 
     public viewAction(request:Request, response:Response):void

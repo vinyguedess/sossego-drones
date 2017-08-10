@@ -42,9 +42,19 @@ export class DroneService
 
     public findAll(limit:number=50, offset:number=0):Promise<Array<any>>
     {
-        return Connection.query(
-            `SELECT * FROM drones LIMIT ${limit} OFFSET ${offset};`
-        );
+        return Promise.all([
+            Connection.query('SELECT COUNT(*) `total` FROM drones;')
+                .then((response:Array<any>):number => response[0].total),
+            Connection.query(`SELECT * FROM drones LIMIT ${limit} OFFSET ${offset};`)
+        ])
+            .then((responses:Array<any>):any => {
+                let [total, drones] = responses;
+
+                return {
+                    'total': total,
+                    'resultSet': drones
+                };
+            });
     }
 
     public find(id:number):Promise<any>
@@ -78,6 +88,7 @@ export class DroneService
                 (err:Error) => err ? reject(err) : resolve(true)
             );
         })
+            .then((response:boolean):boolean => response)
             .catch((err:Error):boolean => {
                 this.addError(err.message);
 

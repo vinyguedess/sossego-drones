@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { expect } from 'chai';
 import { DroneService } from './../../../src/app/v1/Services';
 
 
@@ -12,7 +13,7 @@ describe('DroneServiceTest', ():void => {
                     fs.readFileSync(`${process.cwd()}/test/DataProvider/image-for-test.png`).toString('base64')
                 )
                 .then((response):void => {
-                    console.log(response);
+                    expect(response).to.be.true;
                 })
                 .then(():void => done());
         });

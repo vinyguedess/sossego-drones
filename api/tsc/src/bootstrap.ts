@@ -25,7 +25,6 @@ export class Connection
 
     public static query(query:string, params:any={}):Promise<any>
     {
-        Connection.connect();
         return new Promise((resolve:Function, reject:Function):void => 
         {
             this.conn.query(query, params, (err:Error, results:any):void => {
@@ -34,17 +33,28 @@ export class Connection
 
                 resolve(results);
             });
-        })
-            .then((response) => {
-                this.disconnect();
-
-                return response;
-            });
+        });
     }
 
-    public static disconnect()
+    public static disconnect():Promise<boolean>
     {
-        this.conn.destroy();
+        return new Promise((resolve:Function, reject:Function):void => 
+        {
+            this.conn.end((err:Error) => {
+                if (err)
+                    return reject(err);
+
+                resolve(true);
+            });
+        })
+            .then(() => {
+                console.log('Disconected');
+                return true;
+            })
+            .catch((err:Error) => {
+                console.log(err.message);
+                return false;
+            });
     }
 
 }
@@ -53,7 +63,6 @@ export class Connection
 export const bootstrap = express();
 
 bootstrap.use((request, response, next:Function) => {
-
     response.header("Access-Control-Allow-Origin", "*");
     response.header("Access-Control-Allow-Credentials", true);
     response.header("Access-Control-Allow-Methods", "POST,GET,PUT,DELETE,OPTIONS");
@@ -62,4 +71,14 @@ bootstrap.use((request, response, next:Function) => {
     next();
 });
 bootstrap.use(bodyParser.json());
+
+bootstrap.use((request, response, next:Function) => {
+    Connection.connect();
+    next();
+});
+
 bootstrap.use('/api/v1', v1);
+
+bootstrap.use(() => {
+    Connection.disconnect();
+});
