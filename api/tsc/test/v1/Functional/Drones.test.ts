@@ -13,7 +13,7 @@ describe('DronesTest', function():void {
         it('Should insert a drone without problems', (done:Function):void => {
             makePostPromise('/api/v1/drones', { 
                 'drone': { 
-                    'foto': new Buffer(fs.readFileSync(`${process.cwd()}/test/DataProvider/image-for-test.png`)).toString('base64'),
+                    'foto': fs.readFileSync(`${process.cwd()}/test/DataProvider/image-for-test.png`).toString('base64'),
                     'cor': 'purple', 
                     'tamanho': 'grande', 
                     'preco': 4223.99 

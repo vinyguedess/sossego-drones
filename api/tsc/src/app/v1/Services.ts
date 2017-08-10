@@ -69,14 +69,20 @@ export class DroneService
 
     public upload(id:number, foto:string):Promise<boolean>
     {
+        let newName:string = 'drone_' + new Buffer(id + '').toString('base64');
         return new Promise((resolve:Function, reject:Function):void => 
         {
             fs.writeFile(
-                `${process.cwd()}/../storage/${new Buffer(id + '').toString('base64')}.png`,
-                new Buffer(foto, 'base64').toString('ascii'),
+                `${process.cwd()}/../storage/${newName}.png`,
+                new Buffer(foto, 'base64'),
                 (err:Error) => err ? reject(err) : resolve(true)
             );
-        });
+        })
+            .catch((err:Error):boolean => {
+                this.addError(err.message);
+
+                return false;
+            });
     }
 
     public getErrors():Array<string>
