@@ -10,6 +10,7 @@ export class Table extends React.Component
         super(props);
 
         this.state = {
+            dataPerPage: this.props.dataPerPage || 10,
             total: 0,
             data: [],
             page: 1
@@ -21,8 +22,6 @@ export class Table extends React.Component
 
     componentDidMount()
     {
-        this.state.dataPerPage = this.props.dataPerPage || 10;
-
         if (this.props.ajaxfyUrl)    
             this.loadData();
     }
@@ -33,9 +32,11 @@ export class Table extends React.Component
             <thead>
                 <tr>
                     {
-                        this.props.columns.map((col) => {
+                        this.props.columns.map((col, index) => {
                             return (
-                                <th>{ typeof col === 'string' ? col : col.label }</th>
+                                <th key={`col-header-${index + 1}`}>
+                                    { typeof col === 'string' ? col : col.label }
+                                </th>
                             )
                         })
                     }
@@ -54,9 +55,9 @@ export class Table extends React.Component
                 <tr>
                     <td colSpan={this.props.columns.length} className="text-right">
                         {
-                            pages.map((page) => {
+                            pages.map((page, index) => {
                                 return (
-                                    <a href="#" className="btn btn-primary" disabled={ this.state.page === page + 1 } onClick={this.alternatePage} data-page={page + 1}>
+                                    <a href={`?page=${page + 1}`} key={index} className="btn btn-primary" disabled={ this.state.page === page + 1 } onClick={this.alternatePage} data-page={page + 1}>
                                         {page + 1}
                                     </a>
                                 )
@@ -75,19 +76,19 @@ export class Table extends React.Component
                 {this.renderHeader()}
                 <tbody>
                     {
-                        this.state.data.map((item) => {
+                        this.state.data.map((item, i) => {
                             return (
-                                <tr>
+                                <tr key={`table-item-${i}`}>
                                     {
-                                        this.props.columns.map((col) => {
+                                        this.props.columns.map((col, j) => {
                                             return (
                                                 col.render ?
-                                                    <td>{col.render(item, this)}'</td>
+                                                    <td key={`table-item-${i}-${j}`}>{col.render(item, this)}'</td>
                                                 :
                                                     col.format ?
-                                                        <td>{ col.format(typeof col === 'string' ? item[col] : item[col.name]) }</td>
+                                                        <td key={`table-item-${i}-${j}`}>{ col.format(typeof col === 'string' ? item[col] : item[col.name]) }</td>
                                                     :
-                                                        <td>{ typeof col === 'string' ? item[col] : item[col.name] }</td>
+                                                        <td key={`table-item-${i}-${j}`}>{ typeof col === 'string' ? item[col] : item[col.name] }</td>
                                             );
                                         })
                                     }
@@ -105,7 +106,7 @@ export class Table extends React.Component
     {
         event.preventDefault();
 
-        this.state.page = parseInt(event.target.dataset['page']);
+        this.setState({ page: parseInt(event.target.dataset['page'], 10) });
         this.loadData();
     }
 
@@ -122,7 +123,5 @@ export class Table extends React.Component
                     this.setState({ total: response.data.data.total, data: response.data.data.resultSet });
             });
     }
-
-    
 
 }

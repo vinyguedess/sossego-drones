@@ -17,9 +17,10 @@ export class DronesWindow extends React.Component
 
             drone: {
                 id: null,
-                color: null,
-                size: null,
-                value: '00,00'
+                color: '',
+                size: '',
+                value: '00,00',
+                photo: ''
             },
             isSendingData: false,
 
@@ -36,6 +37,7 @@ export class DronesWindow extends React.Component
 
         this.currencify = this.currencify.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.handleImage = this.handleImage.bind(this);
         this.delete = this.delete.bind(this);
         this.fillForm = this.fillForm.bind(this);
         this.savingDrone = this.savingDrone.bind(this);
@@ -50,6 +52,7 @@ export class DronesWindow extends React.Component
         let url = 'http://localhost:3001/api/v1/drones',
             params = { 
                 drone: {
+                    foto: this.state.drone.photo,
                     cor: this.state.drone.color,
                     tamanho: this.state.drone.size,
                     preco: this.state.drone.value
@@ -59,7 +62,7 @@ export class DronesWindow extends React.Component
 
         params.drone.preco = parseFloat(params.drone.preco
             .replace(/\./gi, '')
-            .replace(/\,/, '.'));
+            .replace(/,/, '.'));
 
         let promise = null;
         if (this.state.drone.id)
@@ -69,7 +72,10 @@ export class DronesWindow extends React.Component
 
         promise
             .then((response) => {
-                this.setState({ drone: { color: '', size: '', value: '00,00' } });
+                if (response.data.status)
+                    this.setState({ drone: { color: '', size: '', value: '00,00' } });
+
+                this.state.table.loadData();
             })
             .catch((err) => {
                 this.setState({ warnings: [err.message] });
@@ -89,12 +95,31 @@ export class DronesWindow extends React.Component
         this.setState({ drone });
     }
 
+    handleImage(event)
+    {
+        
+        let reader = new FileReader();
+        let file = event.target.files[0];
+
+        reader.onloadend = () => {            
+            this.setState({
+                drone: Object.assign(this.state.drone, { 
+                    photo: reader.result.substr(reader.result.indexOf('base64,') + 7)
+                }),
+                imagePreviewUrl: reader.result
+            });
+        }
+
+        reader.readAsDataURL(file)
+
+    }
+
     currencify(event)
     {
         let value = event.target.value;
         value = parseInt((value === '' ? '0' : value)
             .replace(/\./gi, '')
-            .replace(/\,/gi, '')) + '';
+            .replace(/,/gi, ''), 10) + '';
 
         if (value.length === 1) value = '000' + value
         else if (value.length === 2) value = '00' + value
@@ -119,6 +144,21 @@ export class DronesWindow extends React.Component
         return (
             <form onSubmit={this.savingDrone}>
                 <div className="row">
+                    <div className="col-xs-12 col-sm-12 col-md-3">
+                        <div className="col-xs-12 col-sm-6">
+                            <label>Imagem</label>
+                            <input type="file" className="form-control" onChange={this.handleImage} />
+                        </div>
+                        <div className="col-xs-12 col-sm-6 text-center" style={ { background: '#F4F4F4', margin: '10px 0'} }>
+                            { 
+                                this.state.imagePreviewUrl ? 
+                                    <img src={this.state.imagePreviewUrl} width="100%" />
+                                : 
+                                    'Image Preview' 
+                            }
+                        </div>
+                    </div>
+
                     <div className="col-xs-12 col-sm-3">
                         <label>Cor</label>
                         <input type="text" className="form-control" name="color" disabled={this.state.isSendingData} value={this.state.drone.color} onChange={this.handleChange} />
@@ -128,7 +168,7 @@ export class DronesWindow extends React.Component
                         <label>Tamanho</label>
                         <select className="form-control" name="size" disabled={this.state.isSendingData} value={this.state.drone.size} onChange={this.handleChange}>
                             <option>None</option>
-                            { this.state.droneSizes.map((size) => <option value={size.value}>{size.label}</option>) }
+                            { this.state.droneSizes.map((size) => <option key={size.value} value={size.value}>{size.label}</option>) }
                         </select>
                     </div>
 
@@ -166,7 +206,8 @@ export class DronesWindow extends React.Component
                 if (!response.data.status)
                     this.setState({ warnings: [response.data.message] });
 
-                dataset.table.loadData();
+                console.log(this.state.table);
+                this.state.table.loadData();
             })
             .catch((err) => {
                 this.setState({ warnings: [err.message] });
@@ -179,7 +220,7 @@ export class DronesWindow extends React.Component
             { label: 'ID', name: 'id' }, 
             { label: 'Color', name: 'cor' },
             { label: 'Size', name: 'tamanho', format: (value) => value.charAt(0).toUpperCase() + value.slice(1) },
-            { label: 'Prize', name: 'preco', format: (value) => 'R$ ' + (value + '').replace(/\./g, ',') },
+            { label: 'Prize', name: 'preco', format: (value) => 'R$ ' + (value.toFixed(2) + '').replace(/\./g, ',') },
             {
                 label: "Actions",
                 render: (drone, table) =>
@@ -187,16 +228,17 @@ export class DronesWindow extends React.Component
                     return (
                         <span>
                             <Update onClick={this.fillForm} data-item={ drone } />
-                            <Delete onClick={this.delete} data-table={table} data-item={ drone } />
+                            <Delete onClick={this.delete} data-item={ drone } />
                         </span>
                     );
                 }
             }
         ];
 
-        return (
-            <Table ajaxfyUrl="http://localhost:3001/api/v1/drones" columns={ columns } />
-        );
+        let table = <Table key={'table-1'} ajaxfyUrl="http://localhost:3001/api/v1/drones" columns={ columns } />;
+        this.state.table = table;
+
+        return table;
     }
 
     render()

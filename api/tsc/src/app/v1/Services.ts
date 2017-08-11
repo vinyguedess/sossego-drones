@@ -30,7 +30,7 @@ export class DroneService
             'UPDATE drones ' + 
             `SET ${fields.map((f:string):string => f + " = ?").join(',')} ` +
             'WHERE id = ?',
-            fields.concat(id)
+            fields.map((f:string):any => drone[f]).concat(id)
         )
             .then((response:any):boolean => this.checkQueryResponse(response))
             .catch((err:Error):boolean => {
