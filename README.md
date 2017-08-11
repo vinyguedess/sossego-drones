@@ -25,3 +25,7 @@ Ambos os aplicativos executam ao digitar o comando abaixo no terminal na respect
 ```bash
     npm run start
 ```
+
+### 4. Dockerfile
+Ambos os aplicativos tem Dockerfile configurados. Apenas gere uma build e execute o projeto para testar.
+A API expõe a porta 3001 e o Cliente expõe a porta 3000.
