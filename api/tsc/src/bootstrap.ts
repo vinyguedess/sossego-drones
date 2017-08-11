@@ -70,7 +70,8 @@ bootstrap.use((request, response, next:Function) => {
 
     next();
 });
-bootstrap.use(bodyParser.json());
+bootstrap.use(bodyParser.json({ limit: '4mb' }));
+bootstrap.use('/images', express.static('./../storage/'));
 
 bootstrap.use((request, response, next:Function) => {
     Connection.connect();

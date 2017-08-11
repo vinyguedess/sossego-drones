@@ -52,7 +52,12 @@ export class DroneService
 
                 return {
                     'total': total,
-                    'resultSet': drones
+                    'resultSet': drones.map((drone:any):any => {
+                        let imageName = new Buffer(drone.id + '').toString('base64');
+                        drone.foto = `http://localhost:3001/images/drone_${imageName}.png`;
+
+                        return drone;
+                    })
                 };
             });
     }
@@ -67,7 +72,12 @@ export class DroneService
                 if (response.length < 1)
                     return null;
 
-                return response[0];
+                return response.map((drone:any):any => {
+                    let imageName = new Buffer(drone.id).toString('base64');
+                    drone.foto = `http://localhost:3001/image/drone_${imageName}.png`;
+
+                    return drone;
+                })[0];
             });
     }
 

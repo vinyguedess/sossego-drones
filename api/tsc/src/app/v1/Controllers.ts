@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import { Request, Response } from 'express';
 import { DroneService } from './Services';
 
@@ -81,6 +82,9 @@ export class DronesController
                         message: ['Drone not found']
                     });
                 
+                if (typeof request.body.drone.foto !== 'undefined')
+                    droneService.upload(droneService.getLastInsertedId(), request.body.drone.foto);
+
                 droneService
                     .update(drone.id, request.body.drone)
                     .then((isUpdated:boolean):void => {

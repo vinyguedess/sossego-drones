@@ -52,13 +52,15 @@ export class DronesWindow extends React.Component
         let url = 'http://localhost:3001/api/v1/drones',
             params = { 
                 drone: {
-                    foto: this.state.drone.photo,
                     cor: this.state.drone.color,
                     tamanho: this.state.drone.size,
                     preco: this.state.drone.value
                 } 
             },
             config = { timeout: 5000 };
+
+        if (this.state.drone.photo)
+            params.drone.foto = this.state.drone.photo
 
         params.drone.preco = parseFloat(params.drone.preco
             .replace(/\./gi, '')
@@ -73,9 +75,12 @@ export class DronesWindow extends React.Component
         promise
             .then((response) => {
                 if (response.data.status)
-                    this.setState({ drone: { color: '', size: '', value: '00,00' } });
+                    this.setState({ 
+                        drone: { photo: null, color: '', size: '', value: '00,00' },
+                        imagePreviewUrl: null
+                    });
 
-                this.state.table.loadData();
+                this.refs.table.loadData();
             })
             .catch((err) => {
                 this.setState({ warnings: [err.message] });
@@ -97,7 +102,6 @@ export class DronesWindow extends React.Component
 
     handleImage(event)
     {
-        
         let reader = new FileReader();
         let file = event.target.files[0];
 
@@ -110,8 +114,7 @@ export class DronesWindow extends React.Component
             });
         }
 
-        reader.readAsDataURL(file)
-
+        reader.readAsDataURL(file);
     }
 
     currencify(event)
@@ -206,8 +209,7 @@ export class DronesWindow extends React.Component
                 if (!response.data.status)
                     this.setState({ warnings: [response.data.message] });
 
-                console.log(this.state.table);
-                this.state.table.loadData();
+                this.refs.table.loadData();
             })
             .catch((err) => {
                 this.setState({ warnings: [err.message] });
@@ -218,6 +220,13 @@ export class DronesWindow extends React.Component
     {
         let columns = [
             { label: 'ID', name: 'id' }, 
+            { 
+                label: 'Foto', 
+                name: 'foto',
+                format: (value) => <img src={value} alt={ `Drone` } style={
+                    { 'width': '50px', 'height': '50px' }
+                } />
+            },
             { label: 'Color', name: 'cor' },
             { label: 'Size', name: 'tamanho', format: (value) => value.charAt(0).toUpperCase() + value.slice(1) },
             { label: 'Prize', name: 'preco', format: (value) => 'R$ ' + (value.toFixed(2) + '').replace(/\./g, ',') },
@@ -235,10 +244,7 @@ export class DronesWindow extends React.Component
             }
         ];
 
-        let table = <Table key={'table-1'} ajaxfyUrl="http://localhost:3001/api/v1/drones" columns={ columns } />;
-        this.state.table = table;
-
-        return table;
+        return <Table ref="table" key={'table-1'} ajaxfyUrl="http://localhost:3001/api/v1/drones" columns={ columns } />;
     }
 
     render()
@@ -262,4 +268,5 @@ export class DronesWindow extends React.Component
             </div>
         )
     }
+
 }
